@@ -9,6 +9,7 @@ export default function ActivitiesScreen({ navigation, route }) {
     // const [isLoading, setIsLoading] = useState(true);
     // const [error, setError] = useState(null);
     let activities = route.params.activities;
+    console.log(activities);
 
     // const getData = async () => {
     //     setIsLoading(true);
@@ -48,10 +49,10 @@ export default function ActivitiesScreen({ navigation, route }) {
                     onPress={() => navigation.push('activities')}
                 >
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ marginVertical: 10, width: '80%', marginStart: 5, color: 'white' }}>
+                        <Text style={{fontWeight:'bold', marginVertical: 10, width: '80%', marginStart: 5, color: 'white' }}>
                             {data.name}
                         </Text>
-                        <Text style={{ marginVertical: 10, width: '20%' }}>View</Text>
+                        <Text style={{ marginVertical: 10, width: '20%' }}>{data.logs[0].score}/{data.total}</Text>
                     </View>
                 </TouchableHighlight>
             ))}

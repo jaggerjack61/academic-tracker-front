@@ -47,10 +47,10 @@ export default function SubjectsScreen({ navigation, route }) {
                     onPress={() => navigation.push('activities', {activities:subject.course.activities })}
                 >
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ marginVertical: 10, width: '80%', marginStart: 5, color: 'white' }}>
+                        <Text style={{fontWeight:'bold', marginVertical: 10, width: '100%', marginStart: 5, color: 'white' }}>
                             {subject.course.grade.name}    {subject.course.name}     {subject.course.subject.name}
                         </Text>
-                        <Text style={{ marginVertical: 10, width: '20%' }}>View</Text>
+                        {/*<Text style={{ marginVertical: 10, width: '20%' }}>View</Text>*/}
                     </View>
                 </TouchableHighlight>
             ))}
