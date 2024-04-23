@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import { StyleSheet, Text, TouchableHighlight, View, ScrollView } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -15,10 +15,10 @@ export default function SubjectsScreen({ navigation, route }) {
 
         try {
             const token = await AsyncStorage.getItem('token');
-            const response = await axios.get('https://4eda-197-221-253-23.ngrok-free.app/api/classes', {
+            const response = await axios.get('https://90a5-197-221-244-246.ngrok-free.app/api/classes', {
                 headers: { Authorization: 'Bearer ' + token }
             });
-            setClasses(response.data);
+            setClasses(response.data.data);
         } catch (e) {
             setError(e);
         } finally {
@@ -39,12 +39,12 @@ export default function SubjectsScreen({ navigation, route }) {
     }
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             {classes[0].courses.map((subject, index) => (
                 <TouchableHighlight
                     key={index}
                     style={{ height: 50, backgroundColor: 'dodgerblue', margin: 5, borderRadius: 10 }}
-                    onPress={() => navigation.push('activities', {activities:subject.course.activities })}
+                    onPress={() => navigation.push('activities', {activities:subject.course.activities, data:classes })}
                 >
                     <View style={{ flexDirection: 'row' }}>
                         <Text style={{fontWeight:'bold', marginVertical: 10, width: '100%', marginStart: 5, color: 'white' }}>
@@ -55,7 +55,7 @@ export default function SubjectsScreen({ navigation, route }) {
                 </TouchableHighlight>
             ))}
             <StatusBar style="auto" />
-        </View>
+        </ScrollView>
     );
 }
 

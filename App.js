@@ -6,6 +6,7 @@ import SubjectsScreen from "./screens/SubjectsScreen";
 import ActivitiesScreen from "./screens/ActivitiesScreen";
 import {AuthContext, AuthProvider} from "./context/AuthContext";
 import {useContext, useState} from "react";
+import ViewActivityScreen from "./screens/ViewActivityScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -36,7 +37,12 @@ export default function App() {
                 <Stack.Screen
                     name="activities"
                     component={ActivitiesScreen}
-                    options={{title:"Activities",headerBackVisible:false}}
+                    options={{title:"Activities",headerBackVisible:false,  headerShown: false}}
+                />
+                <Stack.Screen
+                    name="activity"
+                    component={ViewActivityScreen}
+                    options={{title:"Activity",headerBackVisible:false}}
                 />
             </Stack.Navigator>
         </NavigationContainer>
