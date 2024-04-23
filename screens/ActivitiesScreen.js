@@ -1,3 +1,4 @@
+import { Card, Title, Paragraph, IconButton, Button, Chip } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 import {
     StyleSheet,
@@ -5,9 +6,9 @@ import {
     TouchableHighlight,
     View,
     Image,
-    Button,
     FlatList,
     TextInput,
+    ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
@@ -20,6 +21,12 @@ export default function ActivitiesScreen({ navigation, route }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredActivities, setFilteredActivities] = useState(activities);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const [selectedChip, setSelectedChip] = useState('All');
+
+    // Get unique item types
+    const uniqueItemTypes = [
+        ...new Set(activities.map((activity) => activity.type.name)),
+    ];
 
     useEffect(() => {
         const filtered = activities.filter((activity) => {
@@ -33,8 +40,16 @@ export default function ActivitiesScreen({ navigation, route }) {
                     activity.due_date.toLowerCase().includes(searchQuery.toLowerCase()))
             );
         });
-        setFilteredActivities(filtered);
-    }, [searchQuery]);
+
+        // Apply additional filtering based on selected chip
+        if (selectedChip !== 'All') {
+            setFilteredActivities(
+                filtered.filter((activity) => activity.type.name === selectedChip)
+            );
+        } else {
+            setFilteredActivities(filtered);
+        }
+    }, [searchQuery, selectedChip]);
 
     return (
         <View style={styles.container}>
@@ -59,33 +74,67 @@ export default function ActivitiesScreen({ navigation, route }) {
                     />
                 </View>
             )}
+
+            {/* Filter chips */}
+            <ScrollView horizontal style={[
+                styles.chipsContainer,
+                { height: 80 } // add this
+            ]}>
+                <Chip
+                    key="All"
+                    selected={selectedChip === 'All'}
+                    onPress={() => setSelectedChip('All')}
+                    style={[styles.chip, selectedChip === 'All' && styles.chipSelected]}
+                >
+                    All
+                </Chip>
+                {uniqueItemTypes.map((itemType) => (
+                    <Chip
+                        key={itemType}
+                        selected={selectedChip === itemType}
+                        onPress={() => setSelectedChip(itemType)}
+                        style={[styles.chip, selectedChip === itemType && styles.chipSelected]}
+                    >
+                        {itemType}
+                    </Chip>
+                ))}
+            </ScrollView>
+
             <FlatList
                 data={filteredActivities}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item, index }) => (
-                    <View key={index} style={styles.card}>
-                        <View style={styles.cardHeader}>
-                            <Image
-                                source={{ uri: host + item.type.image }}
-                                style={styles.cardImage}
-                                resizeMode="cover"
-                            />
-                            <Text style={styles.cardTitle}>{item.name}</Text>
-                        </View>
-                        <View style={styles.cardContent}>
-                            <Text style={styles.cardType}>[{item.type.name}]</Text>
-                            <Text style={styles.cardDueDate}>
-                                Due date: {item.due_date ?? 'None'}
-                            </Text>
+                    <Card key={index} style={styles.card}>
+                        <Card.Content>
+                            <View style={styles.cardHeader}>
+                                <Image
+                                    source={{ uri: host + item.type.image }}
+                                    style={styles.cardImage}
+                                    resizeMode="cover"
+                                />
+                                <Text style={styles.cardTitle}>{item.name}</Text>
+                            </View>
+                            <Paragraph>
+                                <Text style={styles.cardType}>{item.type.name} </Text>
+                                {item.due_date ? (
+                                    <Text style={styles.cardDueDate}>
+                                        Due date: {item.due_date}
+                                    </Text>
+                                ) : (
+                                    ''
+                                )}
+                            </Paragraph>
                             <Button
                                 onPress={() =>
                                     navigation.push('activity', { activity: item, data: classes })
                                 }
-                                style={styles.cardButton}
-                                title="View Details"
-                            />
-                        </View>
-                    </View>
+                                style={{ margin: 5 }}
+                                mode="outlined"
+                            >
+                                View Details
+                            </Button>
+                        </Card.Content>
+                    </Card>
                 )}
             />
             <StatusBar style="auto" />
@@ -147,11 +196,8 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     cardTitle: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: 'bold',
-    },
-    cardContent: {
-        marginTop: 10,
     },
     cardType: {
         fontSize: 14,
@@ -161,10 +207,22 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#555',
     },
-    cardButton: {
-        backgroundColor: '#007bff',
+    // Filter chip styles
+    chipsContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        paddingHorizontal: 10,
+        // marginBottom: 15,
+    },
+    chip: {
+        backgroundColor: '#f5f5f5',
         borderRadius: 5,
-        marginTop: 10,
-        padding: 10,
+        paddingHorizontal: 15,
+        paddingVertical: 2,
+        marginHorizontal: 5,
+    },
+    chipSelected: {
+        backgroundColor: '#007bff',
+        color: '#fff',
     },
 });

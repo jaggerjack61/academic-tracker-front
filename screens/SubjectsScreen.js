@@ -1,5 +1,6 @@
+import { Text, Card, Title,Paragraph, Button } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TouchableHighlight, View, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -31,28 +32,26 @@ export default function SubjectsScreen({ navigation, route }) {
     }, []);
 
     if (isLoading) {
-        return <Text>Loading...</Text>;
+        return <Paragraph>Loading...</Paragraph>;
     }
 
     if (error) {
-        return <Text>Error: {error.message}</Text>;
+        return <Paragraph>Error: {error.message}</Paragraph>;
     }
 
     return (
         <ScrollView style={styles.container}>
             {classes[0].courses.map((subject, index) => (
-                <TouchableHighlight
-                    key={index}
-                    style={{ height: 50, backgroundColor: 'dodgerblue', margin: 5, borderRadius: 10 }}
-                    onPress={() => navigation.push('activities', {activities:subject.course.activities, data:classes })}
-                >
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={{fontWeight:'bold', marginVertical: 10, width: '100%', marginStart: 5, color: 'white' }}>
-                            {subject.course.grade.name}    {subject.course.name}     {subject.course.subject.name}
-                        </Text>
-                        {/*<Text style={{ marginVertical: 10, width: '20%' }}>View</Text>*/}
-                    </View>
-                </TouchableHighlight>
+                <Card key={index} style={styles.card}>
+                    <Card.Content>
+                        <Title>{subject.course.grade.name} {subject.course.name} {subject.course.subject.name}</Title>
+                        <Button icon="chevron-right"
+                                mode="outlined"
+                                onPress={() => navigation.push('activities', {activities:subject.course.activities, data:classes })} >
+                        Open
+                        </Button>
+                    </Card.Content>
+                </Card>
             ))}
             <StatusBar style="auto" />
         </ScrollView>
@@ -64,5 +63,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         margin: 5,
+    },
+    card: {
+        backgroundColor: '#fff',
+        elevation: 5,
+        borderRadius: 10,
+        margin: 5,
+        padding: 10,
     },
 });

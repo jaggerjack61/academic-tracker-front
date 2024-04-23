@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View, TextInput, Image, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, TextInput, Image, ActivityIndicator, Modal } from 'react-native';
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { Text, Button } from 'react-native-paper';
 
 export default function LoginScreen({ navigation }) {
     const [email, setUsername] = useState('');
@@ -9,9 +10,11 @@ export default function LoginScreen({ navigation }) {
     const { login, getUser } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [showModal, setShowModal] = useState(false); // Add state for modal
 
     const handleLogin = async () => {
         setIsLoading(true);
+        setShowModal(true); // Show modal before making API call
         try {
             if (await login({ email, password })) {
                 navigation.navigate("subjects");
@@ -23,6 +26,7 @@ export default function LoginScreen({ navigation }) {
             setError("An error occurred. Please try again later.");
         } finally {
             setIsLoading(false);
+            setShowModal(false); // Hide modal after API call
         }
     };
 
@@ -43,6 +47,9 @@ export default function LoginScreen({ navigation }) {
                 />
 
                 <Text style={{ fontSize: 30, marginBottom: 10 }}>Savant</Text>
+                {error && (
+                    <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>
+                )}
                 <TextInput
                     style={styles.input}
                     placeholder="Username"
@@ -57,19 +64,37 @@ export default function LoginScreen({ navigation }) {
                     secureTextEntry={true}
                 />
                 <View style={styles.buttonContainer}>
-                    <Button title="Login" onPress={handleLogin} />
-                    {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
-                    <Text></Text>
-                    <Button onPress={handleForgotPassword} title="Forgot Password" />
+                    <Button onPress={handleLogin}
+                            style={{ margin: 10 }}
+                            icon='login'
+                            mode='contained'>Login</Button>
+                    {/*{isLoading && <ActivityIndicator size="large" color="#0000ff" />}*/}
+
+                    <Button onPress={handleForgotPassword}
+                            style={{ margin: 10 }}
+                            icon='help'
+                            mode='contained'>Forgot Password</Button>
                 </View>
-                {error && (
-                    <Text style={{ color: 'red', marginTop: 10 }}>{error}</Text>
-                )}
+
                 <StatusBar style="auto" />
             </View>
             <View style={{ backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ margin: 15 }}>Swole Devs &copy; {currentYear}</Text>
             </View>
+
+            {/* Modal for loading indicator */}
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={showModal}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <ActivityIndicator size="large" color="#0000ff" />
+                        {/*<Text style={{ marginTop: 10 }}>Loading...</Text>*/}
+                    </View>
+                </View>
+            </Modal>
         </>
     );
 }
@@ -95,5 +120,19 @@ const styles = StyleSheet.create({
         width: "80%",
         justifyContent: 'space-between',
         marginVertical: 10, // added this line
+    },
+
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: 'transparent',
+        padding: 20,
+        borderRadius: 5,
+        alignItems: 'center',
+        opacity:1
     },
 });

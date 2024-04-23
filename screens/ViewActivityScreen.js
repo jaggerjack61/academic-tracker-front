@@ -1,5 +1,6 @@
 import {StatusBar} from 'expo-status-bar';
-import {StyleSheet, Text, TouchableHighlight, View, Image, Button, Linking} from 'react-native';
+import {StyleSheet, Text, TouchableHighlight, View, Image, Linking} from 'react-native';
+import {Button} from 'react-native-paper'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useEffect, useState} from "react";
 import axios from "axios";
@@ -52,7 +53,9 @@ export default function ViewActivityScreen({navigation, route}) {
 
                     </View>
                     {activity.file !== null?<Button onPress={handleOpenInBrowser}
-                                                    color='lightgreen' title="Download File"/>:null}
+                                                    icon="download"
+                                                    style={{margin:10}}
+                                                    mode="outlined">Download File</Button>:null}
 
                 </View>
             </View>
