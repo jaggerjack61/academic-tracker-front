@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (credentials) => {
         console.log(credentials,"her");
-        if (await axios.post('https://90a5-197-221-244-246.ngrok-free.app/api/login', {credentials})
+        if (await axios.post('https://f369-197-221-244-246.ngrok-free.app/api/login', {credentials})
             .then((res) => {
                 console.log(res.data.message, res.data.token);
                 const token = res.data.token;
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
            console.log(e);
         }
         console.log(userToken+' here6')
-        axios.get('https://90a5-197-221-244-246.ngrok-free.app/api/user', {headers: {Authorization: 'Bearer '+token}})
+        axios.get('https://f369-197-221-244-246.ngrok-free.app/api/user', {headers: {Authorization: 'Bearer '+token}})
             .then((res) => {
                 console.log(res.data);
                 return true;})

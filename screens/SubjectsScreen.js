@@ -9,6 +9,8 @@ export default function SubjectsScreen({ navigation, route }) {
     const [classes, setClasses] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [myToken, setMyToken] = useState('');
+
 
     const getData = async () => {
         setIsLoading(true);
@@ -16,7 +18,8 @@ export default function SubjectsScreen({ navigation, route }) {
 
         try {
             const token = await AsyncStorage.getItem('token');
-            const response = await axios.get('https://90a5-197-221-244-246.ngrok-free.app/api/classes', {
+            setMyToken(token);
+            const response = await axios.get('https://f369-197-221-244-246.ngrok-free.app/api/classes', {
                 headers: { Authorization: 'Bearer ' + token }
             });
             setClasses(response.data.data);
@@ -47,7 +50,7 @@ export default function SubjectsScreen({ navigation, route }) {
                         <Title>{subject.course.grade.name} {subject.course.name} {subject.course.subject.name}</Title>
                         <Button icon="chevron-right"
                                 mode="outlined"
-                                onPress={() => navigation.push('activities', {activities:subject.course.activities, data:classes })} >
+                                onPress={() => navigation.push('activities', {activities:subject.course.activities, data:classes, token:myToken })} >
                         Open
                         </Button>
                     </Card.Content>

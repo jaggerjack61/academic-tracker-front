@@ -17,7 +17,8 @@ import axios from 'axios';
 export default function ActivitiesScreen({ navigation, route }) {
     const activities = route.params.activities;
     const classes = route.params.data;
-    const host = 'https://90a5-197-221-244-246.ngrok-free.app/';
+    const token = route.params.token;
+    const host = 'https://f369-197-221-244-246.ngrok-free.app/';
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredActivities, setFilteredActivities] = useState(activities);
     const [isSearchVisible, setIsSearchVisible] = useState(false);
@@ -126,7 +127,7 @@ export default function ActivitiesScreen({ navigation, route }) {
                             </Paragraph>
                             <Button
                                 onPress={() =>
-                                    navigation.push('activity', { activity: item, data: classes })
+                                    navigation.push('activity', { activity: item, data: classes, token:token })
                                 }
                                 style={{ margin: 5 }}
                                 mode="outlined"
