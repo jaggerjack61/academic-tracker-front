@@ -12,7 +12,7 @@ export default function ViewActivityScreen({navigation, route}) {
     const classes = route.params.data;
     const token = route.params.token;
     const [uri, setUri] = useState("");
-    const host = "https://f369-197-221-244-246.ngrok-free.app/";
+    const host = "https://c800-197-221-244-246.ngrok-free.app/";
     const [file, setFile] = useState(null);
     const [uploading, setUploading] = useState(false); // Add state for loading
 

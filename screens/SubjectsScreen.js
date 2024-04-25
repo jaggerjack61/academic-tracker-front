@@ -7,9 +7,11 @@ import axios from "axios";
 
 export default function SubjectsScreen({ navigation, route }) {
     const [classes, setClasses] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [myToken, setMyToken] = useState('');
+    const data = route.params.data;
+    const subjects1 = route.params.subjects;
 
 
     const getData = async () => {
@@ -19,7 +21,7 @@ export default function SubjectsScreen({ navigation, route }) {
         try {
             const token = await AsyncStorage.getItem('token');
             setMyToken(token);
-            const response = await axios.get('https://f369-197-221-244-246.ngrok-free.app/api/classes', {
+            const response = await axios.get('https://c800-197-221-244-246.ngrok-free.app/api/classes', {
                 headers: { Authorization: 'Bearer ' + token }
             });
             setClasses(response.data.data);
@@ -31,7 +33,7 @@ export default function SubjectsScreen({ navigation, route }) {
     };
 
     useEffect(() => {
-        getData();
+            getData();
     }, []);
 
     if (isLoading) {
@@ -43,21 +45,45 @@ export default function SubjectsScreen({ navigation, route }) {
     }
 
     return (
-        <ScrollView style={styles.container}>
-            {classes[0].courses.map((subject, index) => (
-                <Card key={index} style={styles.card}>
-                    <Card.Content>
-                        <Title>{subject.course.grade.name} {subject.course.name} {subject.course.subject.name}</Title>
-                        <Button icon="chevron-right"
-                                mode="outlined"
-                                onPress={() => navigation.push('activities', {activities:subject.course.activities, data:classes, token:myToken })} >
-                        Open
-                        </Button>
-                    </Card.Content>
-                </Card>
-            ))}
-            <StatusBar style="auto" />
-        </ScrollView>
+        <>
+        {subjects1 !== null ?
+
+                    <ScrollView style={styles.container}>
+                        {subjects1.courses.map((subject, index) => (
+                            <Card key={index} style={styles.card}>
+                                <Card.Content>
+                                    <Title>{subject.course.grade.name} {subject.course.name} {subject.course.subject.name}</Title>
+                                    <Button icon="chevron-right"
+                                            mode="outlined"
+                                            onPress={() => navigation.push('activities', {activities:subject.course.activities, data:[subjects1], token:myToken })} >
+                                        Open
+                                    </Button>
+                                </Card.Content>
+                            </Card>
+                        ))}
+                        <StatusBar style="auto" />
+                    </ScrollView>
+
+                :
+
+                    <ScrollView style={styles.container}>
+                        {classes?.[0]?.courses.map((subject, index) => (
+                            <Card key={index} style={styles.card}>
+                                <Card.Content>
+                                    <Title>{subject.course.grade.name} {subject.course.name} {subject.course.subject.name}</Title>
+                                    <Button icon="chevron-right"
+                                            mode="outlined"
+                                            onPress={() => navigation.push('activities', {activities:subject.course.activities, data:classes, token:myToken })} >
+                                        Open
+                                    </Button>
+                                </Card.Content>
+                            </Card>
+                        ))}
+                        <StatusBar style="auto" />
+                    </ScrollView>
+                }
+        </>
+
     );
 }
 

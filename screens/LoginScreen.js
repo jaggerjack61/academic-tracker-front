@@ -1,13 +1,14 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, TextInput, Image, ActivityIndicator, Modal } from 'react-native';
+import { StyleSheet, View, TextInput, Image, ActivityIndicator, Modal, Alert } from 'react-native';
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Text, Button } from 'react-native-paper';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function LoginScreen({ navigation }) {
     const [email, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { login, getUser } = useContext(AuthContext);
+    const { login, getUser, role } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false); // Add state for modal
@@ -17,7 +18,17 @@ export default function LoginScreen({ navigation }) {
         setShowModal(true); // Show modal before making API call
         try {
             if (await login({ email, password })) {
-                navigation.navigate("subjects");
+                const role2 = await AsyncStorage.getItem('role');
+                console.log(role2);
+                if(role2 === "student"){
+                    navigation.navigate("subjects",{subjects:null, data:null });
+                }
+                else if(role2 === "parent"){
+                    navigation.navigate("students");
+                }
+                else{
+                    Alert.alert('Error', 'The app is only for students and parents');
+                }
             } else {
                 setError("Failed to login. Please check your credentials.");
             }
@@ -31,8 +42,11 @@ export default function LoginScreen({ navigation }) {
     };
 
     const handleForgotPassword = async () => {
-        await getUser({});
-        navigation.navigate("students");
+        // await getUser({});
+        // navigation.navigate("students");
+        Alert.alert(
+            'Forgot Password','Please contact the school administrator to have your password reset.',
+        )
     };
 
     const currentYear = new Date().getFullYear();
@@ -73,7 +87,7 @@ export default function LoginScreen({ navigation }) {
                     <Button onPress={handleForgotPassword}
                             style={{ margin: 10 }}
                             icon='help'
-                            mode='contained'>Forgot Password</Button>
+                            mode='outlined'>Forgot Password</Button>
                 </View>
 
                 <StatusBar style="auto" />

@@ -18,7 +18,7 @@ export default function ActivitiesScreen({ navigation, route }) {
     const activities = route.params.activities;
     const classes = route.params.data;
     const token = route.params.token;
-    const host = 'https://f369-197-221-244-246.ngrok-free.app/';
+    const host = 'https://c800-197-221-244-246.ngrok-free.app/';
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredActivities, setFilteredActivities] = useState(activities);
     const [isSearchVisible, setIsSearchVisible] = useState(false);

@@ -6,15 +6,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [userToken, setUserToken] = useState('');
+    const [role ,setRole] = useState('');
 
     const login = async (credentials) => {
         console.log(credentials,"her");
-        if (await axios.post('https://f369-197-221-244-246.ngrok-free.app/api/login', {credentials})
+        if (await axios.post('https://c800-197-221-244-246.ngrok-free.app/api/login', {credentials})
             .then((res) => {
                 console.log(res.data.message, res.data.token);
                 const token = res.data.token;
                 setUserToken(token);
-                if(getUser(token)) {
+                setRole(res.data.message);
+                if(getUser(token, res.data.message)) {
                     return true;
                 }
                 else{
@@ -34,7 +36,7 @@ export const AuthProvider = ({ children }) => {
 
     };
 
-    const getUser = async (token) => {
+    const getUser = async (token, role2) => {
         // const token = await SecureStore.getItemAsync('userToken');
         // setUserToken(token);
         // print(token,"here5");
@@ -43,8 +45,13 @@ export const AuthProvider = ({ children }) => {
         } catch (e) {
            console.log(e);
         }
+        try {
+            await AsyncStorage.setItem('role', role2);
+        } catch (e) {
+            console.log(e);
+        }
         console.log(userToken+' here6')
-        axios.get('https://f369-197-221-244-246.ngrok-free.app/api/user', {headers: {Authorization: 'Bearer '+token}})
+        axios.get('https://c800-197-221-244-246.ngrok-free.app/api/user', {headers: {Authorization: 'Bearer '+token}})
             .then((res) => {
                 console.log(res.data);
                 return true;})
@@ -59,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ userToken, login, logout}}>
+        <AuthContext.Provider value={{ userToken, login, logout, role}}>
             {children}
         </AuthContext.Provider>
     );
