@@ -14,7 +14,8 @@ export default function ViewActivityScreen({navigation, route}) {
     const [uri, setUri] = useState("");
     const host = "https://c800-197-221-244-246.ngrok-free.app/";
     const [file, setFile] = useState(null);
-    const [uploading, setUploading] = useState(false); // Add state for loading
+    const [uploading, setUploading] = useState(false);
+    const [role, setRole] = useState('');// Add state for loading
 
     const getFilename = uri => uri.split('/').pop().split('#')[0].split('?')[0];
 
@@ -80,6 +81,16 @@ export default function ViewActivityScreen({navigation, route}) {
         }
     };
 
+    const getRole = async () => {
+        setRole(await AsyncStorage.getItem('role'));
+    }
+
+    useEffect(async () => {
+        getRole();
+
+
+    }, []);
+
     return (
         <View style={styles.container}>
             <View style={styles.card}>
@@ -91,7 +102,7 @@ export default function ViewActivityScreen({navigation, route}) {
                     <Text style={{fontWeight:'500', marginBottom: 5}}>Due date: {activity.due_date ?? 'None'}</Text>
                     <Text style={styles.cardDescription}>Description:{activity.note ?? 'None'}</Text>
                     <View style={{flexDirection: 'row', marginBottom: 5}}>
-                        {activity.type.type === 'score' ?
+                        {activity.type.type === 'value' ?
                             <><Text>Total:</Text>
                                 {activity.logs.filter(log => log.activity_id === activity.id && log.student_id === classes[0].id).map(log =>
                                     <Text key={log.id}>{log.score}</Text>)}
@@ -132,9 +143,9 @@ export default function ViewActivityScreen({navigation, route}) {
                                                       icon="download"
                                                       style={{margin: 10}}
                                                       mode="outlined">Download File</Button> : null}
-                    {activity.logs.filter(log => log.activity_id === activity.id && log.student_id === classes[0].id).map(log =>
+                    {role ==='student' ? <>{activity.logs.filter(log => log.activity_id === activity.id && log.student_id === classes[0].id).map(log =>
                         <Button key={log.id} onPress={() => handleUploadFile(log.id)} icon="upload" style={{margin: 10}}
-                                mode="outlined">Upload a File</Button>)}
+                                mode="outlined">Upload a File</Button>)}</> : null}
                 </View>
             </View>
             <StatusBar style="auto"/>
